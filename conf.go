@@ -4,13 +4,15 @@ import "errors"
 
 // MysqlConfig mysql数据库的配置
 type MysqlConfig struct {
-	Host     string
-	Port     int
-	User     string
-	Pass     string
-	DbName   string
-	PreTable string
-	Charset  string
+	Host         string
+	Port         int
+	User         string
+	Pass         string
+	DbName       string
+	PreTable     string
+	Charset      string
+	MaxOpenCons  int
+	MaxIdleConns int
 }
 
 // RedisConfig Redis的配置信息
