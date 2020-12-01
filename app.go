@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"reflect"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -59,7 +60,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		// return
 		fmt.Printf("路径配置 ： %v -> %v-> %v\n", path, h, ok)
 		handle, o := h.(ActionHandle)
-		fmt.Printf("路径配置 ： %v -> %v-> %v\n", path, handle, o)
+		fmt.Printf("路径配置 ： %v -> %v-> %v\n", path, reflect.TypeOf(h).Kind(), reflect.TypeOf(h).NumMethod())
 		handle.Execute(a, w, r)
 		return
 	}
