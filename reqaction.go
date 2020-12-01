@@ -34,6 +34,7 @@ func (a *Action) Execute(app *APP, w http.ResponseWriter, req *http.Request) {
 		a.Handle()
 	}
 }
+func (a *Action) Handle() {}
 
 // GetUID 获取用户的ID
 func (a *Action) GetUID() int64 {
