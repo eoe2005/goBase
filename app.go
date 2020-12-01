@@ -58,10 +58,10 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		// h.Execute(a, w, r)
 		// return
 		fmt.Printf("路径配置 ： %v -> %v-> %v\n", path, h, ok)
-		if handle, o := h.(ActionHandle); o {
-			handle.Execute(a, w, r)
-			return
-		}
+		handle, o := h.(ActionHandle)
+		fmt.Printf("路径配置 ： %v -> %v-> %v\n", path, handle, o)
+		handle.Execute(a, w, r)
+		return
 	}
 	w.Header().Add("Content-Type", "application/json")
 	w.Write([]byte("{\"code\" : 404,\"msg\":\"接口不存在\",\"data\":\"\"}"))
