@@ -59,7 +59,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		// return
 		fmt.Printf("路径配置 ： %v -> %v-> %v\n", path, h, ok)
 		if handle, o := h.(ActionHandle); o {
-			handle.Execute(a, &w, r)
+			handle.Execute(a, w, r)
 			return
 		}
 	}

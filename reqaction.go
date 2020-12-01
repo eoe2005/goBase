@@ -10,12 +10,12 @@ import (
 // ActionHandle 路由要处理的防反
 type ActionHandle interface {
 	Handle()
-	Execute(*APP, *http.ResponseWriter, *http.Request)
+	Execute(*APP, http.ResponseWriter, *http.Request)
 }
 
 // Action 接口处理
 type Action struct {
-	W       *http.ResponseWriter
+	W       http.ResponseWriter
 	R       *http.Request
 	App     *APP
 	IsLogin bool
@@ -23,7 +23,7 @@ type Action struct {
 }
 
 // Execute 程序的入口
-func (a *Action) Execute(app *APP, w *http.ResponseWriter, req *http.Request) {
+func (a *Action) Execute(app *APP, w http.ResponseWriter, req *http.Request) {
 	a.W = w
 	a.R = req
 	a.App = app
