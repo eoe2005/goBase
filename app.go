@@ -53,7 +53,9 @@ func (a *APP) RandString(len int) string {
 // ServerDefaultHandle 配置默认的路由信息
 func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
+	fmt.Printf("地址 ： %v\n", path)
 	if h, ok := a.AppConfig.APIRouters[path]; ok {
+		fmt.Printf("路径配置 ： %v -> %v(%v) -> %v\n", path, h, h.(ActionHandle), ok)
 		if handle, o := h.(ActionHandle); o {
 			handle.Execute(a, w, r)
 			return
