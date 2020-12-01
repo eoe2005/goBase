@@ -54,7 +54,7 @@ func (a *APP) RandString(len int) string {
 func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	if h, ok := a.AppConfig.APIRouters[path]; ok {
-		if handle, o := h.(ActionHandle); o {
+		if handle, o := h.(*ActionHandle); o {
 			handle.Execute(a, w, r)
 			return
 		}
