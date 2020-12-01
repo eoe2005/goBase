@@ -1,13 +1,13 @@
-// package goBase
+package goBase
 
 // import "time"
 
-// // DBTable 表配置信息
-// type DBTable struct {
-// 	DbConfName string
-// 	TableName  string
-// 	PK         string
-// }
+// DBTable 表配置信息
+type DBTable struct {
+	DbConfName string
+	TableName  string
+	PK         string
+}
 
 // // ORM 数据表中的字段对应
 // type ORM struct {
