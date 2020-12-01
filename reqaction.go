@@ -10,7 +10,7 @@ import (
 // ActionHandle 路由要处理的防反
 type ActionHandle interface {
 	Handle()
-	Execute(*APP, http.ResponseWriter, *http.Request)
+	Execute(*APP, *http.ResponseWriter, *http.Request)
 }
 
 // Action 接口处理
