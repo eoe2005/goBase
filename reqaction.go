@@ -15,7 +15,6 @@ type ActionHandle interface {
 
 // Action 接口处理
 type Action struct {
-	ActionHandle
 	W       http.ResponseWriter
 	R       *http.Request
 	App     *APP
