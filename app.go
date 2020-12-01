@@ -23,7 +23,7 @@ func (a *APP) GetMysqlCon(name string) *sql.DB {
 	if con, ok := a.DbCons[name]; ok {
 		return con
 	}
-	conf, err := a.Conf.getDBConfByName(name)
+	conf, err := a.AppConfig.getDBConfByName(name)
 	if err != nil {
 		panic(err)
 	}
