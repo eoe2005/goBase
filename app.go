@@ -55,11 +55,13 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	fmt.Printf("地址 ： %v   {%v}\n", path, a.AppConfig.APIRouters)
 	if h, ok := a.AppConfig.APIRouters[path]; ok {
-		fmt.Printf("路径配置 ： %v -> %v (%v)-> %v\n", path, h, h.(Action), ok)
-		if handle, o := h.(Action); o {
-			handle.Execute(a, w, r)
-			return
-		}
+		h.Execute(a, w, r)
+		return
+		// fmt.Printf("路径配置 ： %v -> %v (%v)-> %v\n", path, h, h.(Action), ok)
+		// if handle, o := h.(Action); o {
+		// 	h.Execute(a, w, r)
+		// 	return
+		// }
 	}
 	w.Header().Add("Content-Type", "application/json")
 	w.Write([]byte("{\"code\" : 404,\"msg\":\"接口不存在\",\"data\":\"\"}"))
