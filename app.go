@@ -14,7 +14,7 @@ import (
 type APP struct {
 	AppConfig *AppConfig
 	DbCons    map[string]*sql.DB
-	Pools     map[string]*GRedis
+	RedisCons map[string]*GRedis
 	Aes       *Secure
 }
 

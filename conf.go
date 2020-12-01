@@ -25,10 +25,10 @@ type RedisConfig struct {
 
 // Config 配置文件
 type AppConfig struct {
-	Port       int                    //端口
-	APIRouters map[string]interface{} //
-	MysqlConfs map[string]MysqlConfig
-	RedisConfs map[string]RedisConfig
+	Port       int                      //端口
+	APIRouters map[string]*ActionHandle //
+	MysqlConfs map[string]*MysqlConfig
+	RedisConfs map[string]*RedisConfig
 	KV         map[string]interface{}
 }
 
