@@ -15,6 +15,7 @@ type ActionHandle interface {
 
 // Action 接口处理
 type Action struct {
+	ActionHandle
 	W       http.ResponseWriter
 	R       *http.Request
 	App     *APP
@@ -34,7 +35,8 @@ func (a *Action) Execute(app *APP, w http.ResponseWriter, req *http.Request) {
 		a.Handle()
 	}
 }
-func (a *Action) Handle() {}
+
+//func (a *Action) Handle() {}
 
 // GetUID 获取用户的ID
 func (a *Action) GetUID() int64 {
