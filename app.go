@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"reflect"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -55,13 +56,23 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	fmt.Printf("地址 ： %v   {%v}\n", path, a.AppConfig.APIRouters)
 	if h, ok := a.AppConfig.APIRouters[path]; ok {
-
-		handle, _ := h.(ActionHandle)
-		handle.Handle(&GReq{
-			App: a,
-			W:w,
-			R:r,
-		})
+		t := reflect.TypeOf(h).Kind()
+		if t == reflect.Struct{
+			handle, _ := h.(ActionHandle)
+			handle.Handle(&GReq{
+				App: a,
+				W:w,
+				R:r,
+			})
+		}
+		if t == reflect.Func{
+			handle, _ := h.(func(*GReq))
+			handle(&GReq{
+				App: a,
+				W:w,
+				R:r,
+			})
+		}
 		return
 	}
 	w.Header().Add("Content-Type", "application/json")
