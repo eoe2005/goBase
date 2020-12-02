@@ -48,6 +48,8 @@ func (a *GReq) SetUID(uid int64) {
 
 // SetCookie 设置Cookie
 func (a *GReq) SetCookie(val http.Cookie) {
+	val.Path = "/"
+	val.MaxAge = 1800
 	a.W.Header().Set("set-cookie", val.String())
 }
 
@@ -57,7 +59,7 @@ func (a *GReq) SetAesCookie(key string, val interface{}) {
 	if e != nil {
 		return
 	}
-	a.SetCookie(http.Cookie{Name: key, Value: data, Path: "/"})
+	a.SetCookie(http.Cookie{Name: key, Value: data})
 }
 
 // GetAesCookie 获取AES加密的KEY
