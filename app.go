@@ -56,12 +56,13 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	fmt.Printf("地址 ： %v   {%v}\n", path, a.AppConfig.APIRouters)
 	if h, ok := a.AppConfig.APIRouters[path]; ok {
-		// h.Execute(a, w, r)
-		// return
-		fmt.Printf("路径配置 ： %v -> %v-> %v\n", path, h, ok)
+
 		handle, _ := h.(ActionHandle)
-		fmt.Printf("路径配置 ： %v -> %v-> %v\n", path, reflect.TypeOf(h).Kind(), reflect.TypeOf(h).NumMethod())
-		handle.Execute(a, w, r)
+		handle.Handle(&GReq{
+			App: a,
+			W:w,
+			R:r,
+		})
 		return
 	}
 	w.Header().Add("Content-Type", "application/json")

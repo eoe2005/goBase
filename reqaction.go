@@ -9,37 +9,20 @@ import (
 
 // ActionHandle 路由要处理的防反
 type ActionHandle interface {
-	Handle()
-	Execute(*APP, http.ResponseWriter, *http.Request)
+	Handle(req *GReq)
 }
 
-// Action 接口处理
-type Action struct {
-	ActionHandle
+// GReq 接口处理
+type GReq struct {
 	W       http.ResponseWriter
 	R       *http.Request
 	App     *APP
-	IsLogin bool
-	UID     int64
 }
 
-// Execute 程序的入口
-func (a *Action) Execute(app *APP, w http.ResponseWriter, req *http.Request) {
-	a.W = w
-	a.R = req
-	a.App = app
-	a.UID = a.GetUID()
-	if a.IsLogin && a.UID < 1 {
-		a.Fail(301, "账号没有登录")
-	} else {
-		a.Handle()
-	}
-}
 
-//func (a *Action) Handle() {}
 
 // GetUID 获取用户的ID
-func (a *Action) GetUID() int64 {
+func (a *GReq) GetUID() int64 {
 	data := a.GetAesCookie("guk")
 	if len(data) < 1 {
 		return 0
@@ -57,19 +40,19 @@ func (a *Action) GetUID() int64 {
 }
 
 // SetUID 设置用户信息
-func (a *Action) SetUID(uid int64) {
+func (a *GReq) SetUID(uid int64) {
 	code := a.App.RandString(10)
 	a.SetAesCookie("guk", code)
 	a.SetAesCookie(code, uid)
 }
 
 // SetCookie 设置Cookie
-func (a *Action) SetCookie(val http.Cookie) {
+func (a *GReq) SetCookie(val http.Cookie) {
 	a.W.Header().Set("Set-Cookie", val.String())
 }
 
 // SetAesCookie AES Cookie
-func (a *Action) SetAesCookie(key string, val interface{}) {
+func (a *GReq) SetAesCookie(key string, val interface{}) {
 	data, e := a.App.Aes.Encode(fmt.Sprintf("%v", val))
 	if e != nil {
 		return
@@ -78,7 +61,7 @@ func (a *Action) SetAesCookie(key string, val interface{}) {
 }
 
 // GetAesCookie 获取AES加密的KEY
-func (a *Action) GetAesCookie(key string) string {
+func (a *GReq) GetAesCookie(key string) string {
 	data := a.GetCookie(key)
 	if len(data) < 1 {
 		return ""
@@ -91,7 +74,7 @@ func (a *Action) GetAesCookie(key string) string {
 }
 
 // GetCookie 获取Cookie信息
-func (a *Action) GetCookie(key string) string {
+func (a *GReq) GetCookie(key string) string {
 	v, e := a.R.Cookie(key)
 	if e != nil {
 		return ""
@@ -100,7 +83,7 @@ func (a *Action) GetCookie(key string) string {
 }
 
 // Fail 输出错误信息
-func (a *Action) Fail(code int64, msg string) {
+func (a *GReq) Fail(code int64, msg string) {
 	a.W.Header().Add("Content-Type", "application/json")
 	r := map[string]interface{}{"code": code, "msg": msg, "data": ""}
 	rd, _ := json.Marshal(r)
@@ -108,7 +91,7 @@ func (a *Action) Fail(code int64, msg string) {
 }
 
 //Success 成功时候的输出
-func (a *Action) Success(data interface{}) {
+func (a *GReq) Success(data interface{}) {
 	a.W.Header().Add("Content-Type", "application/json")
 	r := map[string]interface{}{"code": 0, "msg": "", "data": data}
 	rd, _ := json.Marshal(r)
