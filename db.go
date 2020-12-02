@@ -60,3 +60,26 @@ type DBTable struct {
 
 // // QueryAll 查询全部的咧
 // func (a *DBTable) QueryAll(whereform ...string) {}
+
+// RowsToStruct 转成结构体
+//func RowsToStruct(rows *sql.Rows,desc interface{}) bool  {
+//	names ,e := rows.Columns()
+//	if e!= nil{
+//		return false
+//	}
+//	//st := reflect.TypeOf(desc)
+//	//len := st.NumField()
+//	//for i:=0 ; i< len ; i++{
+//	//	f := st.Field(i)
+//	//	dname := f.Tag.Get("dbkey")
+//	//
+//	//}
+//	lenNames := len(names)
+//	values := [lenNames]interface{}{}
+//	for i := 0 ; i< lenNames ; i++{
+//		values[i] = interface{}
+//	}
+//	for name := range names{
+//
+//	}
+//}
