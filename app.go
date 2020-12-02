@@ -58,13 +58,14 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 	if h, ok := a.AppConfig.APIRouters[path]; ok {
 		t := reflect.TypeOf(h).Kind()
 		if t == reflect.Struct{
-			handle, ok := h.(ActionHandle)
-			fmt.Printf("结构体 %v %v \n",handle,ok)
-			handle.Handle(&GReq{
+			m := reflect.ValueOf(h).MethodByName("Handle")
+			args := []reflect.Value{reflect.ValueOf(&GReq{
 				App: a,
 				W:w,
 				R:r,
-			})
+			})}
+			m.Call(args)
+			return
 		}
 		if t == reflect.Func{
 			handle, _ := h.(func(*GReq))
@@ -73,11 +74,15 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 				W:w,
 				R:r,
 			})
+		}else{
+			w.Header().Add("Content-Type", "application/json")
+			w.Write([]byte("{\"code\" : 404,\"msg\":\"接口不存在\",\"data\":\"\"}"))
 		}
 		return
 	}
 	w.Header().Add("Content-Type", "application/json")
 	w.Write([]byte("{\"code\" : 404,\"msg\":\"接口不存在\",\"data\":\"\"}"))
+
 }
 
 // Run 程序运行
