@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // ActionHandle 路由要处理的防反
@@ -53,7 +54,8 @@ func (a *GReq) SetCookie(key ,val string) {
 		Value: val,
 		Path: "/",
 		MaxAge: 1800,
-		Domain: "*",
+		Domain: "localhost",
+		Expires: time.Now().AddDate(0,1,0),
 	}
 
 	http.SetCookie(a.W,c)
