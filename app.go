@@ -58,7 +58,8 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 	if h, ok := a.AppConfig.APIRouters[path]; ok {
 		t := reflect.TypeOf(h).Kind()
 		if t == reflect.Struct{
-			handle, _ := h.(ActionHandle)
+			handle, ok := h.(ActionHandle)
+			fmt.Printf("结构体 %v %v \n",handle,ok)
 			handle.Handle(&GReq{
 				App: a,
 				W:w,
