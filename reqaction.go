@@ -50,7 +50,7 @@ func (a *GReq) SetUID(uid int64) {
 func (a *GReq) SetCookie(val http.Cookie) {
 	val.Path = "/"
 	val.MaxAge = 1800
-	a.W.Header().Set("set-cookie", val.String())
+	a.W.Header().Add("set-cookie", val.String())
 }
 
 // SetAesCookie AES Cookie
