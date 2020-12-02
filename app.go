@@ -59,7 +59,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		t := reflect.TypeOf(h).Kind()
 		if t == reflect.Struct{
 			m := reflect.ValueOf(h).MethodByName("Handle")
-			args := []reflect.Value{reflect.ValueOf(GReq{
+			args := []reflect.Value{reflect.ValueOf(&GReq{
 				App: a,
 				W:w,
 				R:r,
