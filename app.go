@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	"reflect"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
