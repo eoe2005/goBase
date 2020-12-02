@@ -59,7 +59,7 @@ func (a *GReq) SetCookie(key ,val string) {
 	}
 
 	http.SetCookie(a.W,c)
-	a.W.Header().Set("set-cookie", c.String())
+	a.W.Header().Add("set-cookie", c.String())
 }
 
 // SetAesCookie AES Cookie
