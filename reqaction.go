@@ -48,7 +48,7 @@ func (a *GReq) SetUID(uid int64) {
 
 // SetCookie 设置Cookie
 func (a *GReq) SetCookie(val http.Cookie) {
-	a.W.Header().Set("Set-Cookie", val.String())
+	a.W.Header().Set("set-cookie", val.String())
 }
 
 // SetAesCookie AES Cookie
