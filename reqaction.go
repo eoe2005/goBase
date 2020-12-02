@@ -47,10 +47,17 @@ func (a *GReq) SetUID(uid int64) {
 }
 
 // SetCookie 设置Cookie
-func (a *GReq) SetCookie(val http.Cookie) {
-	val.Path = "/"
-	val.MaxAge = 1800
-	a.W.Header().Add("set-cookie", val.String())
+func (a *GReq) SetCookie(key ,val string) {
+	c := &http.Cookie{
+		Name: key,
+		Value: val,
+		Path: "/",
+		MaxAge: 1800,
+		Domain: "*",
+	}
+
+	http.SetCookie(a.W,c)
+	a.W.Header().Set("set-cookie", c.String())
 }
 
 // SetAesCookie AES Cookie
@@ -59,7 +66,7 @@ func (a *GReq) SetAesCookie(key string, val interface{}) {
 	if e != nil {
 		return
 	}
-	a.SetCookie(http.Cookie{Name: key, Value: data})
+	a.SetCookie(key,data)
 }
 
 // GetAesCookie 获取AES加密的KEY
