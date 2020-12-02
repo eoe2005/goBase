@@ -64,6 +64,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 				W:w,
 				R:r,
 			})}
+			fmt.Print(m,args)
 			m.Call(args)
 			return
 		}
