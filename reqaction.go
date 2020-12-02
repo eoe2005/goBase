@@ -59,13 +59,14 @@ func (a *GReq) SetCookie(key ,val string) {
 	}
 
 	http.SetCookie(a.W,c)
-	a.W.Header().Add("set-cookie", c.String())
+	//a.W.Header().Add("set-cookie", c.String())
 }
 
 // SetAesCookie AES Cookie
 func (a *GReq) SetAesCookie(key string, val interface{}) {
 	data, e := a.App.Aes.Encode(fmt.Sprintf("%v", val))
 	if e != nil {
+		fmt.Printf("设置AESCookie 失败 : %v %v \n",key,e)
 		return
 	}
 	a.SetCookie(key,data)
