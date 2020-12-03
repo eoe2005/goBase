@@ -73,6 +73,7 @@ func (r *Smtp) Send()  {
 	data = append(data,STMP_LFRT)
 	data = append(data,fmt.Sprintf("--%v--%v",boundary,STMP_LFRT))
 
+	fmt.Printf("生成邮件内容：%v\n",data)
 	sdomain := strings.Split(r.ToEmail,"@")
 	if len(sdomain) < 2{
 		return
@@ -80,6 +81,7 @@ func (r *Smtp) Send()  {
 	domain := sdomain[1]
 	lst,e := net.LookupMX(domain)
 	if e!=nil{
+		fmt.Printf("查询服务器失败：%v %v\n" ,domain,e)
 		return
 	}
 
@@ -87,28 +89,38 @@ func (r *Smtp) Send()  {
 		mx := lst[i]
 		con,e := net.DialTimeout("TCP",fmt.Sprintf("%v:25",mx.Host),time.Second * 10)
 		if e!= nil{
+			fmt.Printf("链接失败：%v %v\n" ,mx.Host,e)
 			continue
 		}
 		b := []byte{}
 		con.Write([]byte(fmt.Sprintf("HELO %v%v",domain,STMP_LFRT)))
 		con.Read(b)
+		fmt.Printf("接收到内容：%v\n" ,string(b))
 		con.Write([]byte(fmt.Sprintf("MAIL From:<%v>%v",r.FromEmail,STMP_LFRT)))
 		con.Read(b)
+		fmt.Printf("接收到内容：%v\n" ,string(b))
 		con.Write([]byte(fmt.Sprintf("RCPT To:<%v>%v",r.ToEmail,STMP_LFRT)))
 		con.Read(b)
+		fmt.Printf("接收到内容：%v\n" ,string(b))
 		con.Write([]byte(fmt.Sprintf("DATA%v",STMP_LFRT)))
 		con.Read(b)
+		fmt.Printf("接收到内容：%v\n" ,string(b))
 		con.Write([]byte(fmt.Sprintf("%v",STMP_LFRT)))
 		con.Read(b)
+		fmt.Printf("接收到内容：%v\n" ,string(b))
 		con.Write([]byte(fmt.Sprintf("%v%v",data,STMP_LFRT)))
 		con.Read(b)
+		fmt.Printf("接收到内容：%v\n" ,string(b))
 		con.Write([]byte(fmt.Sprintf("%v",STMP_LFRT)))
 		con.Read(b)
+		fmt.Printf("接收到内容：%v\n" ,string(b))
 		con.Write([]byte(fmt.Sprintf(".%v",STMP_LFRT)))
 		con.Read(b)
+		fmt.Printf("接收到内容：%v\n" ,string(b))
 		con.Write([]byte(fmt.Sprintf("QUIT%v",STMP_LFRT)))
 		con.Write([]byte(fmt.Sprintf("%v",STMP_LFRT)))
 		con.Close()
+		fmt.Printf("接收到内容：发送完毕\n" ,r.ToEmail)
 		return
 	}
 }
