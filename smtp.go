@@ -107,7 +107,7 @@ func (r *Smtp) Send()  {
 		con.Write([]byte(fmt.Sprintf("DATA%v",STMP_LFRT)))
 		b3,_,_:=red.ReadLine()
 		fmt.Printf("Data 接收到内容：%v\n" ,string(b3))
-		con.Write([]byte(fmt.Sprintf("%v",STMP_LFRT)))
+		//con.Write([]byte(fmt.Sprintf("%v",STMP_LFRT)))
 		con.Write([]byte(fmt.Sprintf("%v%v",strings.Join(data,""),STMP_LFRT)))
 		b5,_,_:=red.ReadLine()
 		fmt.Printf("Body 接收到内容：%v\n" ,string(b5))
