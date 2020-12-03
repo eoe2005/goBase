@@ -3,8 +3,10 @@ package goBase
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -70,6 +72,25 @@ func (a *GReq) SetAesCookie(key string, val interface{}) {
 		return
 	}
 	a.SetCookie(key,data)
+}
+// GetIP 获取客户端IP
+func (a *GReq) GetIP() string{
+	xForwardedFor := a.R.Header.Get("X-Forwarded-For")
+	ip := strings.TrimSpace(strings.Split(xForwardedFor, ",")[0])
+	if ip != "" {
+		return ip
+	}
+
+	ip = strings.TrimSpace(a.R.Header.Get("X-Real-Ip"))
+	if ip != "" {
+		return ip
+	}
+
+	if ip, _, err := net.SplitHostPort(strings.TrimSpace(a.R.RemoteAddr)); err == nil {
+		return ip
+	}
+
+	return ""
 }
 
 // GetAesCookie 获取AES加密的KEY
