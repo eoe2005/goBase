@@ -26,7 +26,8 @@ type RedisConfig struct {
 // Config 配置文件
 type AppConfig struct {
 	Port       int                    //端口
-	APIRouters map[string]interface{} //
+	Routers map[string]interface{} // 一般接口
+	RoutersLogined map[string]interface{} //必须登录的接口
 	MysqlConfs map[string]*MysqlConfig
 	RedisConfs map[string]*RedisConfig
 	KV         map[string]interface{}

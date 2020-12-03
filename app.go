@@ -53,36 +53,41 @@ func (a *APP) RandString(len int) string {
 
 // ServerDefaultHandle 配置默认的路由信息
 func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
+	req := &GReq{
+		App: a,
+		W:w,
+		R:r,
+	}
 	path := r.URL.Path
-	fmt.Printf("地址 ： %v   {%v}\n", path, a.AppConfig.APIRouters)
-	if h, ok := a.AppConfig.APIRouters[path]; ok {
+	isLogin := false
+	h, ok := a.AppConfig.Routers[path];
+	if !ok{
+		h, ok = a.AppConfig.RoutersLogined[path];
+		isLogin = true
+	}
+	if ok{
+		if isLogin{
+			uid := req.GetUID()
+			if uid < 1{
+				req.Fail(301,"账号没有登录")
+			}
+		}
 		t := reflect.TypeOf(h).Kind()
 		if t == reflect.Struct{
 			m := reflect.ValueOf(h).MethodByName("Handle")
-			args := []reflect.Value{reflect.ValueOf(&GReq{
-				App: a,
-				W:w,
-				R:r,
-			})}
-			fmt.Print(m,args)
+			args := []reflect.Value{reflect.ValueOf(req)}
 			m.Call(args)
 			return
 		}
 		if t == reflect.Func{
 			handle, _ := h.(func(*GReq))
-			handle(&GReq{
-				App: a,
-				W:w,
-				R:r,
-			})
+			handle(req)
 		}else{
-			w.Header().Add("Content-Type", "application/json")
-			w.Write([]byte("{\"code\" : 404,\"msg\":\"接口不存在\",\"data\":\"\"}"))
+			req.Fail(404,"接口不存在")
 		}
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
-	w.Write([]byte("{\"code\" : 404,\"msg\":\"接口不存在\",\"data\":\"\"}"))
+	req.Fail(404,"接口不存在")
 
 }
 
