@@ -59,11 +59,12 @@ func (r *Smtp) Send()  {
 			filePath := r.Files[i]
 			fData,e := ioutil.ReadFile(filePath)
 			if e != nil{
+				fmt.Printf("读取文件失败 %v\n",filePath)
 				continue
 			}
 			data = append(data,STMP_LFRT)
 			data = append(data,fmt.Sprintf("--%v%v",boundary,STMP_LFRT))
-			bName := path.Base(filePath)
+			bName := base64.StdEncoding.EncodeToString([]byte(path.Base(filePath)))
 			data = append(data,fmt.Sprintf("Content-Type: application/octet-stream; name=\"=?utf-8?B?%v?=%v",bName,STMP_LFRT))
 			data = append(data,fmt.Sprintf("Content-Disposition: attachment; filename=\"=?utf-8?B?%v?=%v",bName,STMP_LFRT))
 			data = append(data,fmt.Sprintf("Content-Transfer-Encoding: base64%v",STMP_LFRT))
