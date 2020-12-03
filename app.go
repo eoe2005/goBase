@@ -70,6 +70,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 			uid := req.GetUID()
 			if uid < 1{
 				req.Fail(301,"账号没有登录")
+				return
 			}
 		}
 		t := reflect.TypeOf(h).Kind()
@@ -82,8 +83,10 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		if t == reflect.Func{
 			handle, _ := h.(func(*GReq))
 			handle(req)
+			return
 		}else{
 			req.Fail(404,"接口不存在")
+			return
 		}
 		return
 	}

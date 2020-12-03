@@ -54,7 +54,7 @@ func (a *GReq) SetCookie(key ,val string) {
 		Value: val,
 		Path: "/",
 		MaxAge: 1800,
-		Domain: "localhost",
+		//Domain: "localhost",
 		Expires: time.Now().AddDate(0,1,0),
 	}
 
