@@ -1,85 +1,77 @@
 package goBase
 
-// import "time"
-
-// DBTable 表配置信息
-type DBTable struct {
-	DbConfName string
-	TableName  string
-	PK         string
+import "database/sql"
+// DBGetRow 获取一行记录
+func DBGetRow(db *sql.DB,format string,args ... interface{}) map[string]interface{} {
+	data := DBGetAll(db,format,args...)
+	if len(data) > 0{
+		return data[0]
+	}
+	return nil
+}
+// DBGetAll 获取全部的记录
+func  DBGetAll(r *sql.DB,format string,args... interface{}) []map[string]interface{}  {
+	rows , e := r.Query(format,args...)
+	defer rows.Close()
+	ret := make([]map[string]interface{},0)
+	if e != nil{
+		return ret
+	}
+	names ,e2:= rows.Columns()
+	if e2 != nil{
+		return ret
+	}
+	flen := len(names)
+	for rows.Next(){
+		values := make([]interface{},flen)
+		pvalues := make([]interface{},flen)
+		for i:=0;i<flen;i++{
+			pvalues[i] = &values[i]
+		}
+		rows.Scan(pvalues)
+		ent := make(map[string]interface{},0)
+		for i:=0;i<flen;i++{
+			ent[names[i]] = values[i]
+		}
+		ret = append(ret,ent)
+	}
+	return ret
+}
+// DBUpdate 更新记录
+func  DBUpdate(db *sql.DB,format string,args... interface{}) int64 {
+	r,e := db.Exec(format,args...)
+	if e!=nil{
+		return 0
+	}
+	ret,e2 := r.RowsAffected()
+	if e2 != nil {
+		return 0
+	}
+	return ret
+}
+// DBInsert 插入记录
+func DBInsert(db *sql.DB,format string,args... interface{}) int64 {
+	r,e := db.Exec(format,args...)
+	if e!=nil{
+		return 0
+	}
+	ret,e2 := r.LastInsertId()
+	if e2 != nil {
+		return 0
+	}
+	return ret
+}
+// DBDelete 删除记录
+func DBDelete(db *sql.DB,format string,args... interface{}) int64 {
+	r,e := db.Exec(format,args...)
+	if e!=nil{
+		return 0
+	}
+	ret,e2 := r.RowsAffected()
+	if e2 != nil {
+		return 0
+	}
+	return ret
 }
 
-// // ORM 数据表中的字段对应
-// type ORM struct {
-// 	ID       int64     `dbkey:"id"`
-// 	CreateAt time.Time `dbkey:"create_at"`
-// 	CreateIP string    `dbkey:"create_ip"`
-// 	UpdateAt time.Time `dbkey:"update_at"`
-// 	UpdateIP string    `dbkey:"update_ip"`
-// }
 
-// func (a *DBTable) getCon() {
-// 	if a.PK == nil {
-
-// 	}
-// 	//return a.PK
-// }
-
-// // Find 查询一行
-// func (a *DBTable) Find(id int64) (interface{}, error) {}
-
-// // UpdateByIDAndMap 使用主键和map更新记录
-// func (a *DBTable) UpdateByIDAndMap(id int64, data map[string]interface{}) int {
-// 	return 0
-// }
-
-// // UpdateByIDAndStruct 使用主键和结构体更新一行
-// func (a *DBTable) UpdateByIDAndStruct(id, int64, data interface{}) int {
-// 	return 0
-// }
-
-// // Insert 使用Map插入一行
-// func (a *DBTable) Insert(data map[string]interface{}) int {
-// 	return 0
-// }
-
-// // Save 用结构体插入一行记录
-// func (a *DBTable) Save(data interface{}) int {
-// 	return 0
-// }
-
-// // Delete 根据主键删除一行记录
-// func (a *DBTable) Delete(id int64) int {
-// 	return 0
-// }
-
-// //QueryRow 插叙数据
-// func (a *DBTable) QueryRow(whereform ...string) {
-// 	a.QueryAll(whereform...)
-// }
-
-// // QueryAll 查询全部的咧
-// func (a *DBTable) QueryAll(whereform ...string) {}
-
-// RowsToStruct 转成结构体
-//func RowsToStruct(rows *sql.Rows,desc interface{}) bool  {
-//	names ,e := rows.Columns()
-//	if e!= nil{
-//		return false
-//	}
-//	//st := reflect.TypeOf(desc)
-//	//len := st.NumField()
-//	//for i:=0 ; i< len ; i++{
-//	//	f := st.Field(i)
-//	//	dname := f.Tag.Get("dbkey")
-//	//
-//	//}
-//	lenNames := len(names)
-//	values := [lenNames]interface{}{}
-//	for i := 0 ; i< lenNames ; i++{
-//		values[i] = interface{}
-//	}
-//	for name := range names{
-//
-//	}
-//}
