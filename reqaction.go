@@ -17,12 +17,10 @@ type ActionHandle interface {
 
 // GReq 接口处理
 type GReq struct {
-	W       http.ResponseWriter
-	R       *http.Request
-	App     *APP
+	W   http.ResponseWriter
+	R   *http.Request
+	App *APP
 }
-
-
 
 // GetUID 获取用户的ID
 func (a *GReq) GetUID() int64 {
@@ -50,17 +48,17 @@ func (a *GReq) SetUID(uid int64) {
 }
 
 // SetCookie 设置Cookie
-func (a *GReq) SetCookie(key ,val string) {
+func (a *GReq) SetCookie(key, val string) {
 	c := &http.Cookie{
-		Name: key,
-		Value: val,
-		Path: "/",
+		Name:   key,
+		Value:  val,
+		Path:   "/",
 		MaxAge: 1800,
 		//Domain: "localhost",
-		Expires: time.Now().AddDate(0,1,0),
+		Expires: time.Now().AddDate(0, 1, 0),
 	}
 
-	http.SetCookie(a.W,c)
+	http.SetCookie(a.W, c)
 	//a.W.Header().Add("set-cookie", c.String())
 }
 
@@ -68,13 +66,14 @@ func (a *GReq) SetCookie(key ,val string) {
 func (a *GReq) SetAesCookie(key string, val interface{}) {
 	data, e := a.App.Aes.Encode(fmt.Sprintf("%v", val))
 	if e != nil {
-		fmt.Printf("设置AESCookie 失败 : %v %v \n",key,e)
+		fmt.Printf("设置AESCookie 失败 : %v %v \n", key, e)
 		return
 	}
-	a.SetCookie(key,data)
+	a.SetCookie(key, data)
 }
+
 // GetIP 获取客户端IP
-func (a *GReq) GetIP() string{
+func (a *GReq) GetIP() string {
 	xForwardedFor := a.R.Header.Get("X-Forwarded-For")
 	ip := strings.TrimSpace(strings.Split(xForwardedFor, ",")[0])
 	if ip != "" {
@@ -129,4 +128,49 @@ func (a *GReq) Success(data interface{}) {
 	r := map[string]interface{}{"code": 0, "msg": "", "data": data}
 	rd, _ := json.Marshal(r)
 	a.W.Write(rd)
+}
+
+// CheckPostParams 检查POST参数
+func (a *GReq) CheckPostParams(d map[string]string) bool {
+	for k, v := range d {
+		t := a.R.FormValue(k)
+		vals := strings.Split(v, "|")
+		for i := range vals {
+			switch vals[i] {
+			case "required":
+				if t == "" {
+					a.Fail(201, "参数错误")
+					return false
+				}
+				// 			case "email":
+				// 				pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`; //匹配电子邮箱
+				//  3      reg := regexp.MustCompile(pattern)
+				//  4      if reg.MatchString(t){
+			}
+		}
+	}
+	return true
+}
+
+// CheckGetParams 检查GET参数
+func (a *GReq) CheckGetParams(d map[string]string) bool {
+	data := a.R.URL.Query()
+	for k, v := range d {
+		t := data.Get(k)
+		vals := strings.Split(v, "|")
+		for i := range vals {
+			switch vals[i] {
+			case "required":
+				if t == "" {
+					a.Fail(201, "参数错误")
+					return false
+				}
+				// 			case "email":
+				// 				pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`; //匹配电子邮箱
+				//  3      reg := regexp.MustCompile(pattern)
+				//  4      if reg.MatchString(t){
+			}
+		}
+	}
+	return true
 }
