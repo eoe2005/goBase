@@ -94,6 +94,7 @@ func (r *Smtp) Send()  {
 			continue
 		}
 		red := bufio.NewReader(con)
+		red.ReadLine()
 		con.Write([]byte(fmt.Sprintf("EHLO %v%v",domain,STMP_LFRT)))
 		b,_,_:=red.ReadLine()
 		fmt.Printf("EHLO 接收到内容：%v\n" ,string(b))
