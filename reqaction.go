@@ -47,6 +47,19 @@ func (a *GReq) SetUID(uid int64) {
 	a.SetAesCookie(code, uid)
 }
 
+// DeleteCookie 删除COOKIE
+func (a *GReq) DeleteCookie(key ...string) {
+	for i := range key {
+		c := &http.Cookie{
+			Name:   key[i],
+			Value:  "",
+			Path:   "/",
+			MaxAge: -1,
+		}
+		http.SetCookie(a.W, c)
+	}
+}
+
 // SetCookie 设置Cookie
 func (a *GReq) SetCookie(key, val string) {
 	c := &http.Cookie{
