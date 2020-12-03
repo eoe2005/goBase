@@ -1,6 +1,7 @@
 package goBase
 
 import (
+	"bufio"
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
@@ -92,35 +93,36 @@ func (r *Smtp) Send()  {
 			fmt.Printf("链接失败：%v %v\n" ,mx.Host,e)
 			continue
 		}
-		b := []byte{}
+		red := bufio.NewReader(con)
 		con.Write([]byte(fmt.Sprintf("HELO %v%v",domain,STMP_LFRT)))
+		b,_,_:=red.ReadLine()
 		con.Read(b)
 		fmt.Printf("接收到内容：%v\n" ,string(b))
 		con.Write([]byte(fmt.Sprintf("MAIL From:<%v>%v",r.FromEmail,STMP_LFRT)))
-		con.Read(b)
-		fmt.Printf("接收到内容：%v\n" ,string(b))
+		b1,_,_:=red.ReadLine()
+		fmt.Printf("接收到内容：%v\n" ,string(b1))
 		con.Write([]byte(fmt.Sprintf("RCPT To:<%v>%v",r.ToEmail,STMP_LFRT)))
-		con.Read(b)
-		fmt.Printf("接收到内容：%v\n" ,string(b))
+		b2,_,_:=red.ReadLine()
+		fmt.Printf("接收到内容：%v\n" ,string(b2))
 		con.Write([]byte(fmt.Sprintf("DATA%v",STMP_LFRT)))
-		con.Read(b)
-		fmt.Printf("接收到内容：%v\n" ,string(b))
+		b3,_,_:=red.ReadLine()
+		fmt.Printf("接收到内容：%v\n" ,string(b3))
 		con.Write([]byte(fmt.Sprintf("%v",STMP_LFRT)))
-		con.Read(b)
-		fmt.Printf("接收到内容：%v\n" ,string(b))
+		b4,_,_:=red.ReadLine()
+		fmt.Printf("接收到内容：%v\n" ,string(b4))
 		con.Write([]byte(fmt.Sprintf("%v%v",data,STMP_LFRT)))
-		con.Read(b)
-		fmt.Printf("接收到内容：%v\n" ,string(b))
+		b5,_,_:=red.ReadLine()
+		fmt.Printf("接收到内容：%v\n" ,string(b5))
 		con.Write([]byte(fmt.Sprintf("%v",STMP_LFRT)))
-		con.Read(b)
-		fmt.Printf("接收到内容：%v\n" ,string(b))
+		b6,_,_:=red.ReadLine()
+		fmt.Printf("接收到内容：%v\n" ,string(b6))
 		con.Write([]byte(fmt.Sprintf(".%v",STMP_LFRT)))
-		con.Read(b)
-		fmt.Printf("接收到内容：%v\n" ,string(b))
+		b7,_,_:=red.ReadLine()
+		fmt.Printf("接收到内容：%v\n" ,string(b7))
 		con.Write([]byte(fmt.Sprintf("QUIT%v",STMP_LFRT)))
 		con.Write([]byte(fmt.Sprintf("%v",STMP_LFRT)))
 		con.Close()
-		fmt.Printf("接收到内容：发送完毕\n" ,r.ToEmail)
+		fmt.Printf("接收到内容：发送完毕\n")
 		return
 	}
 }
