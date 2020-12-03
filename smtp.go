@@ -28,9 +28,9 @@ type Smtp struct {
 // Send 发送邮件
 func (r *Smtp) Send()  {
 	data := []string{}
-	data = append(data,fmt.Sprintf("From: =?utf-8?B?%v?= <%v>%v",r.FromEmail,base64.StdEncoding.EncodeToString([]byte(r.FromName)),STMP_LFRT))
-	data = append(data,fmt.Sprintf("To: =?utf-8?B?%v?= <%v>%v",r.ToEmail,base64.StdEncoding.EncodeToString([]byte(r.ToName)),STMP_LFRT))
-	data = append(data,fmt.Sprintf("Subject: =?utf-8?B?%v?=%v",base64.StdEncoding.EncodeToString([]byte(r.Subject))),STMP_LFRT)
+	data = append(data,fmt.Sprintf("From: =?utf-8?B?%v?= <%v>%v",base64.StdEncoding.EncodeToString([]byte(r.FromName)),r.FromEmail,STMP_LFRT))
+	data = append(data,fmt.Sprintf("To: =?utf-8?B?%v?= <%v>%v",base64.StdEncoding.EncodeToString([]byte(r.ToName)),r.ToEmail,STMP_LFRT))
+	data = append(data,fmt.Sprintf("Subject: =?utf-8?B?%v?=%v",base64.StdEncoding.EncodeToString([]byte(r.Subject)),STMP_LFRT))
 
 	data = append(data,fmt.Sprintf("%v%v","MIME-Version: 1.0"),STMP_LFRT)
 	h := md5.New()
