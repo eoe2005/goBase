@@ -74,7 +74,7 @@ func (r *Smtp) Send()  {
 	data = append(data,STMP_LFRT)
 	data = append(data,fmt.Sprintf("--%v--%v",boundary,STMP_LFRT))
 
-	fmt.Printf("生成邮件内容：%v\n",data)
+	fmt.Printf("生成邮件内容：%v\n",strings.Join(data,""))
 	sdomain := strings.Split(r.ToEmail,"@")
 	if len(sdomain) < 2{
 		return
