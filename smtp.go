@@ -87,7 +87,7 @@ func (r *Smtp) Send()  {
 
 	for i:= range lst{
 		mx := lst[i]
-		con,e := net.DialTimeout("TCP",fmt.Sprintf("%v:25",mx.Host),time.Second * 10)
+		con,e := net.DialTimeout("tcp",fmt.Sprintf("%v:25",mx.Host),time.Second * 10)
 		if e!= nil{
 			fmt.Printf("链接失败：%v %v\n" ,mx.Host,e)
 			continue
