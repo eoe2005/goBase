@@ -4,11 +4,20 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/md5"
 	"encoding/base64"
+	"encoding/hex"
 )
 
 type Secure struct {
 	AESKEY string
+}
+
+//MD5 Md5加密字符串
+func (a *Secure) MD5(data string) string {
+	h := md5.New()
+	h.Write([]byte(data))
+	return hex.EncodeToString(h.Sum(nil))
 }
 
 // Encode 加密数据
