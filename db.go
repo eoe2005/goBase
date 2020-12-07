@@ -17,10 +17,12 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 	defer rows.Close()
 	ret := make([]map[string]interface{}, 0)
 	if e != nil {
+		LogError("SQL 错误 %v", e)
 		return ret
 	}
 	names, e2 := rows.Columns()
 	if e2 != nil {
+		LogError("SQL 错误 %v", e2)
 		return ret
 	}
 	flen := len(names)
