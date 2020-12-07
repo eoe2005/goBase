@@ -79,7 +79,7 @@ func (a *GReq) SetCookie(key, val string) {
 func (a *GReq) SetAesCookie(key string, val interface{}) {
 	data, e := a.App.Aes.Encode(fmt.Sprintf("%v", val))
 	if e != nil {
-		fmt.Printf("设置AESCookie 失败 : %v %v \n", key, e)
+		LogError("设置AESCookie 失败 : %v %v", key, e)
 		return
 	}
 	a.SetCookie(key, data)
@@ -113,6 +113,7 @@ func (a *GReq) GetAesCookie(key string) string {
 	}
 	ret, e := a.App.Aes.Decode(data)
 	if e != nil {
+		LogError("AES解密错误 %v", e)
 		return ""
 	}
 	return ret
