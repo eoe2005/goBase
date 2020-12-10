@@ -188,6 +188,11 @@ func (a *GReq) CheckGetParams(d map[string]string) bool {
 					return false
 				}
 			}
+		case "code":
+			if len(t) < 4{
+				a.Fail(201, "验证码错误")
+					return false
+			}
 		}
 	}
 	return true
