@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -179,10 +180,13 @@ func (a *GReq) CheckGetParams(d map[string]string) bool {
 					a.Fail(201, "参数错误")
 					return false
 				}
-				// 			case "email":
-				// 				pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`; //匹配电子邮箱
-				//  3      reg := regexp.MustCompile(pattern)
-				//  4      if reg.MatchString(t){
+			case "email":
+				pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*` //匹配电子邮箱
+				reg := regexp.MustCompile(pattern)
+				if !reg.MatchString(t) {
+					a.Fail(201, "邮箱格式错误")
+					return false
+				}
 			}
 		}
 	}
