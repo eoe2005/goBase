@@ -149,19 +149,8 @@ func (a *GReq) Success(data interface{}) {
 func (a *GReq) CheckPostParams(d map[string]string) bool {
 	for k, v := range d {
 		t := a.R.FormValue(k)
-		vals := strings.Split(v, "|")
-		for i := range vals {
-			switch vals[i] {
-			case "required":
-				if t == "" {
-					a.Fail(201, "参数错误")
-					return false
-				}
-				// 			case "email":
-				// 				pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`; //匹配电子邮箱
-				//  3      reg := regexp.MustCompile(pattern)
-				//  4      if reg.MatchString(t){
-			}
+		if !a.checkParams(t, v) {
+			return false
 		}
 	}
 	return true
@@ -172,28 +161,49 @@ func (a *GReq) CheckGetParams(d map[string]string) bool {
 	data := a.R.URL.Query()
 	for k, v := range d {
 		t := data.Get(k)
-		vals := strings.Split(v, "|")
-		for i := range vals {
-			switch vals[i] {
-			case "required":
-				if t == "" {
-					a.Fail(201, "参数错误")
-					return false
-				}
-			case "email":
-				pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*` //匹配电子邮箱
-				reg := regexp.MustCompile(pattern)
-				if !reg.MatchString(t) {
-					a.Fail(201, "邮箱格式错误")
-					return false
-				}
+		if !a.checkParams(t, v) {
+			return false
+		}
+	}
+	return true
+}
+
+func (a *GReq) checkParams(v, rules string) bool {
+	vals := strings.Split(rules, "|")
+	for i := range vals {
+		switch vals[i] {
+		case "required":
+			if v == "" {
+				a.Fail(201, "参数错误")
+				return false
+			}
+		case "email":
+			pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*` //匹配电子邮箱
+			reg := regexp.MustCompile(pattern)
+			if !reg.MatchString(v) {
+				a.Fail(201, "邮箱格式错误")
+				return false
 			}
 		case "code":
-			if len(t) < 4{
+			if len(v) < 4 {
 				a.Fail(201, "验证码错误")
-					return false
+				return false
+			}
+
+		case "mobile":
+			pattern := `1(3|5|7|8)\d{9}` //匹配电子邮箱
+			reg := regexp.MustCompile(pattern)
+			if !reg.MatchString(v) {
+				a.Fail(201, "手机号格式错误")
+				return false
+			}
+		case "passwd":
+			if len(v) < 6 || len(v) > 20 {
+				a.Fail(201, "密码必须大于6位小于20位")
+				return false
 			}
 		}
 	}
 	return true
+
 }
