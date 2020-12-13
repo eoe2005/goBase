@@ -30,7 +30,9 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		values := make([]interface{}, flen)
 		pvalues := make([]interface{}, flen)
 		for i := 0; i < flen; i++ {
-			pvalues[i] = &values[i]
+			var retf interface{}
+			values[i] = &retf
+			pvalues[i] = values[i]
 		}
 		rows.Scan(pvalues)
 		ent := make(map[string]interface{}, 0)
