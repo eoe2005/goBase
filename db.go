@@ -35,7 +35,7 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 			values = append(values,&retf)
 		}
 
-		rows.Scan(values)
+		rows.Scan(values...)
 
 		ret = append(ret, ent)
 	}
