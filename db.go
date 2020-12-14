@@ -22,11 +22,11 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		LogError("SQL 错误 %v", e)
 		return ret
 	}
-	types, e3 := rows.ColumnTypes()
-	if e3 != nil {
-		LogError("SQL 查询结果格式错误 %v", e3)
-		return ret
-	}
+	// types, e3 := rows.ColumnTypes()
+	// if e3 != nil {
+	// 	LogError("SQL 查询结果格式错误 %v", e3)
+	// 	return ret
+	// }
 	names, e2 := rows.Columns()
 	if e2 != nil {
 		LogError("SQL 错误 %v", e2)
