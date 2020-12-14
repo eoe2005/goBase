@@ -51,18 +51,19 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 			switch types[i].ScanType().Kind() {
 			// case reflect.Int64:
 			// 	ent[names[i]] = v.Elem().Int()
-			case reflect.Slice:
-				ent[names[i]] = string(v.Elem().Bytes())
+			// case reflect.Slice:
+			// 	ent[names[i]] = string(v.Elem().Bytes())
 			case reflect.String:
 				ent[names[i]] = v.Elem().String()
 				// case reflect.Struct:
 				// 	ent[names[i]] = v.Elem().
 			}
 
-			LogDebug("输出数据 ：name : %v , t: %v kind : %v ,value: %v",
+			LogDebug("输出数据 ：name : %v , t: %v -> %v kind : %v -> %v ,value: %v",
 				names[i],
-				types[i].ScanType().Name(),
-				types[i].ScanType().Kind(), ent[names[i]])
+				types[i].ScanType().Name(), v.Type().Name(),
+				types[i].ScanType().Kind(), v.Type().Kind(),
+				ent[names[i]])
 		}
 		ret = append(ret, ent)
 	}
