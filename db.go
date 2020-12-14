@@ -52,7 +52,7 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 			// case reflect.Int64:
 			// 	ent[names[i]] = v.Elem().Int()
 			case reflect.Slice:
-				ent[names[i]] = v.Elem().String()
+				ent[names[i]] = string(v.Elem().Bytes())
 			case reflect.String:
 				ent[names[i]] = v.Elem().String()
 				// case reflect.Struct:
