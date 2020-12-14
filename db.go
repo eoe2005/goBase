@@ -2,7 +2,6 @@ package goBase
 
 import (
 	"database/sql"
-	"reflect"
 )
 
 // DBGetRow 获取一行记录
@@ -39,16 +38,15 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		ent := make(map[string]interface{}, flen)
 		values := make([]interface{}, 0, flen)
 		for i := 0; i < flen; i++ {
-			tt := types[i].ScanType().Kind()
 			var retf interface{}
-			switch tt {
-			case reflect.String:
-				retf = ""
-			case reflect.Int64:
-				retf = 0
-			case reflect.Int8:
-				retf = 0
-			}
+			// 	switch tt {
+			// 	case reflect.String:
+			// 		retf = ""
+			// 	case reflect.Int64:
+			// 		retf = 0
+			// 	case reflect.Int8:
+			// 		retf = 0
+			// 	}
 			ent[names[i]] = &retf
 			values = append(values, &retf)
 		}
