@@ -48,8 +48,11 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		for i := 0; i < flen; i++ {
 
 			v := reflect.ValueOf(values[i])
+			switch types[i].ScanType().Kind() {
+			case reflect.String:
+				ent[names[i]] = v.Convert(types[i].ScanType()).String()
+			}
 
-			ent[names[i]] = v.Convert(types[i].ScanType()).String()
 			LogDebug("输出数据 ：name : %v , kind : %v ,value: %v", names[i], v.Kind().String(), ent[names[i]])
 		}
 		ret = append(ret, ent)
