@@ -53,7 +53,7 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 
 		rows.Scan(values...)
 		for i := 0; i < flen; i++ {
-			LogDebug("输出数据 ： %v", values[i])
+			LogDebug("输出数据 ： %v", values[i].(string))
 		}
 		ret = append(ret, ent)
 	}
