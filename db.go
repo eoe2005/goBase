@@ -49,14 +49,16 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 
 			v := reflect.ValueOf(values[i])
 			switch types[i].ScanType().Kind() {
-			// case reflect.Int64:
-			// 	ent[names[i]] = v.Elem().Interface().(int64)
+			case reflect.Int64:
+				ent[names[i]] = v.Elem().Interface()
 			case reflect.Slice:
 				ent[names[i]] = string(v.Elem().Interface().([]byte))
-				// case reflect.String:
-				// 	ent[names[i]] = v.Elem().Interface().(string)
-				// case reflect.Struct:
-				// 	ent[names[i]] = v.Elem().Interface().(time.Time)
+			// case reflect.String:
+			// 	ent[names[i]] = v.Elem().Interface().(string)
+			case reflect.Struct:
+				ent[names[i]] = v.Elem().Interface()
+			default:
+				ent[names[i]] = v.Elem().Interface()
 			}
 
 			LogDebug("输出数据 ：name : %v , t: %v -> %v kind : %v -> %v ,value: %v",
