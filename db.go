@@ -47,10 +47,10 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		rows.Scan(values...)
 		for i := 0; i < flen; i++ {
 
-			v := reflect.TypeOf(values[i])
-			reflect.TypeOf(values[i]).ConvertibleTo(types[i].ScanType())
-			ent[names[i]] = values[i]
-			LogDebug("输出数据 ：name : %v , kind : %v ,value: %v", v.Name(), v.Kind().String(), values[i])
+			v := reflect.ValueOf(values[i])
+
+			ent[names[i]] = v.Convert(types[i].ScanType()).String()
+			LogDebug("输出数据 ：name : %v , kind : %v ,value: %v", names[i], v.Kind().String(), ent[names[i]])
 		}
 		ret = append(ret, ent)
 	}
