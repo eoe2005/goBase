@@ -23,11 +23,11 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		LogError("SQL 错误 %v", e)
 		return ret
 	}
-	// types, e3 := rows.ColumnTypes()
-	// if e3 != nil {
-	// 	LogError("SQL 查询结果格式错误 %v", e3)
-	// 	return ret
-	// }
+	types, e3 := rows.ColumnTypes()
+	if e3 != nil {
+		LogError("SQL 查询结果格式错误 %v", e3)
+		return ret
+	}
 	names, e2 := rows.Columns()
 	if e2 != nil {
 		LogError("SQL 错误 %v", e2)
@@ -40,21 +40,15 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		values := make([]interface{}, 0, flen)
 		for i := 0; i < flen; i++ {
 			var retf interface{}
-			// 	switch tt {
-			// 	case reflect.String:
-			// 		retf = ""
-			// 	case reflect.Int64:
-			// 		retf = 0
-			// 	case reflect.Int8:
-			// 		retf = 0
-			// 	}
 			ent[names[i]] = &retf
 			values = append(values, &retf)
 		}
 
 		rows.Scan(values...)
 		for i := 0; i < flen; i++ {
+
 			v := reflect.TypeOf(values[i])
+			reflect.TypeOf(values[i]).ConvertibleTo(types[i].ScanType())
 			LogDebug("输出数据 ：name : %v , kind : %v ,value: %v", v.Name(), v.Kind().String(), values[i])
 		}
 		ret = append(ret, ent)
