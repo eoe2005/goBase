@@ -3,6 +3,7 @@ package goBase
 import (
 	"database/sql"
 	"reflect"
+	"time"
 )
 
 // DBGetRow 获取一行记录
@@ -49,14 +50,14 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 
 			v := reflect.ValueOf(values[i])
 			switch types[i].ScanType().Kind() {
-			// case reflect.Int64:
-			// 	ent[names[i]] = v.Elem().Int()
-			// case reflect.Slice:
-			// 	ent[names[i]] = string(v.Elem().Bytes())
+			case reflect.Int64:
+				ent[names[i]] = v.Elem().Interface().(int64)
+			case reflect.Slice:
+				ent[names[i]] = v.Elem().Interface().(string)
 			case reflect.String:
-				ent[names[i]] = v.Elem().String()
-				// case reflect.Struct:
-				// 	ent[names[i]] = v.Elem().
+				ent[names[i]] = v.Elem().Interface().(string)
+			case reflect.Struct:
+				ent[names[i]] = v.Elem().Interface().(time.Time)
 			}
 
 			LogDebug("输出数据 ：name : %v , t: %v -> %v kind : %v -> %v ,value: %v",
