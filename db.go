@@ -37,7 +37,7 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 
 	for rows.Next() {
 		ent := make(map[string]interface{}, flen)
-		values := make([]interface{}, flen)
+		values := make([]interface{}, 1, flen)
 		for i := 0; i < flen; i++ {
 			tt := types[i].ScanType().Kind()
 			var retf interface{}
