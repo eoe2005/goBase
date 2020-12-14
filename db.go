@@ -41,7 +41,6 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		values := make([]interface{}, 0, flen)
 		for i := 0; i < flen; i++ {
 			var retf interface{}
-			//ent[names[i]] = &retf
 			values = append(values, &retf)
 		}
 
@@ -51,11 +50,16 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 			v := reflect.ValueOf(values[i])
 			switch types[i].ScanType().Kind() {
 			case reflect.Int64:
-				ent[names[i]], _ = strconv.ParseInt(string(v.Elem().Interface().([]byte)), 10, 64)
+				switch reflect.ValueOf(v.Elem().Interface()).Type().Kind(){
+				case reflect.Int64:
+					ent[names[i]] = v.Elem().Interface().(int64)
+				case reflect.Slice:
+					ent[names[i]], _ = strconv.ParseInt(string(v.Elem().Interface().([]byte)), 10, 64)
+				}
 			case reflect.Slice:
 				ent[names[i]] = string(v.Elem().Interface().([]byte))
-			// case reflect.String:
-			// 	ent[names[i]] = v.Elem().Interface().(string)
+			case reflect.String:
+				ent[names[i]], _ = strconv.ParseInt(string(v.Elem().Interface().([]byte)), 10, 64)
 			case reflect.Struct:
 				ent[names[i]] = string(v.Elem().Interface().([]byte))
 			default:
@@ -65,7 +69,9 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 			LogDebug("输出数据 ：name : %v , t: %v -> %v kind : %v -> %v ,value: %v",
 				names[i],
 				types[i].ScanType().Name(), v.Elem().Type().Name(),
-				types[i].ScanType().Kind(), v.Elem().Type().Kind(),
+				types[i].ScanType().Kind(), 
+				reflect.ValueOf(v.Elem().Interface()).Type().Kind(),
+				//v.Elem().Type().Kind(),
 				ent[names[i]])
 		}
 		ret = append(ret, ent)
