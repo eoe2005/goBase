@@ -61,8 +61,8 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 
 			LogDebug("输出数据 ：name : %v , t: %v -> %v kind : %v -> %v ,value: %v",
 				names[i],
-				types[i].ScanType().Name(), v.Type().Name(),
-				types[i].ScanType().Kind(), v.Type().Kind(),
+				types[i].ScanType().Name(), v.Elem().Type().Name(),
+				types[i].ScanType().Kind(), v.Elem().Type().Kind(),
 				ent[names[i]])
 		}
 		ret = append(ret, ent)
