@@ -40,7 +40,7 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		values := make([]interface{}, 0, flen)
 		for i := 0; i < flen; i++ {
 			var retf interface{}
-			ent[names[i]] = &retf
+			//ent[names[i]] = &retf
 			values = append(values, &retf)
 		}
 
@@ -49,6 +49,7 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 
 			v := reflect.TypeOf(values[i])
 			reflect.TypeOf(values[i]).ConvertibleTo(types[i].ScanType())
+			ent[names[i]] = values[i]
 			LogDebug("输出数据 ：name : %v , kind : %v ,value: %v", v.Name(), v.Kind().String(), values[i])
 		}
 		ret = append(ret, ent)
