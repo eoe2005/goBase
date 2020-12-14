@@ -2,6 +2,7 @@ package goBase
 
 import (
 	"database/sql"
+	"reflect"
 )
 
 // DBGetRow 获取一行记录
@@ -53,7 +54,8 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 
 		rows.Scan(values...)
 		for i := 0; i < flen; i++ {
-			LogDebug("输出数据 ： %v", values[i].(string))
+			v := reflect.TypeOf(values[i])
+			LogDebug("输出数据 ：name : %v , kind : %v ,value: %v", v.Name(), v.Kind().String(), values[i])
 		}
 		ret = append(ret, ent)
 	}
