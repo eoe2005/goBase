@@ -49,8 +49,8 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 
 			v := reflect.ValueOf(values[i])
 			switch types[i].ScanType().Kind() {
-			case reflect.Int64:
-				ent[names[i]] = v.Elem().Int()
+			// case reflect.Int64:
+			// 	ent[names[i]] = v.Elem().Int()
 			case reflect.Slice:
 				ent[names[i]] = v.Elem().String()
 			case reflect.String:
