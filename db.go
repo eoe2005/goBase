@@ -1,6 +1,9 @@
 package goBase
 
-import "database/sql"
+import (
+	"database/sql"
+	"reflect"
+)
 
 // DBGetRow 获取一行记录
 func DBGetRow(db *sql.DB, format string, args ...interface{}) map[string]interface{} {
@@ -20,19 +23,32 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 		LogError("SQL 错误 %v", e)
 		return ret
 	}
+	types, e3 := rows.ColumnTypes()
+	if e3 != nil {
+		LogError("SQL 查询结果格式错误 %v", e3)
+		return ret
+	}
 	names, e2 := rows.Columns()
 	if e2 != nil {
 		LogError("SQL 错误 %v", e2)
 		return ret
 	}
 	flen := len(names)
+
 	for rows.Next() {
 		ent := make(map[string]interface{}, flen)
-		values := make([]interface{},0, flen)
+		values := make([]interface{}, 0, flen)
 		for i := 0; i < flen; i++ {
+			tt := types[i].ScanType().Kind()
 			var retf interface{}
+			switch tt {
+			case reflect.String:
+				retf = ""
+			case reflect.Int64:
+				retf = 0
+			}
 			ent[names[i]] = &retf
-			values = append(values,&retf)
+			values = append(values, &retf)
 		}
 
 		rows.Scan(values...)
