@@ -168,6 +168,11 @@ func (a *GReq) CheckGetParams(d map[string]string) bool {
 	return true
 }
 
+// Post 获取POST数据
+func (a *GReq) Post(key string) string {
+	return a.R.PostFormValue(key)
+}
+
 func (a *GReq) checkParams(v, rules string) bool {
 	vals := strings.Split(rules, "|")
 	for i := range vals {
@@ -206,4 +211,24 @@ func (a *GReq) checkParams(v, rules string) bool {
 	}
 	return true
 
+}
+
+// DbInsert 数据插入
+func (a *GReq) DbInsert(format string, args ...interface{}) int64 {
+	return DBInsert(a.App.GetMysqlCon("default"), format, args...)
+}
+
+//DbDelete 删除数据
+func (a *GReq) DbDelete(format string, args ...interface{}) int64 {
+	return DBDelete(a.App.GetMysqlCon("default"), format, args...)
+}
+
+// DbFetchRow 获取一行数据
+func (a *GReq) DbFetchRow(format string, args ...interface{}) map[string]interface{} {
+	return DBGetRow(a.App.GetMysqlCon("default"), format, args...)
+}
+
+// DbFetchAll 获取全部数据
+func (a *GReq) DbFetchAll(format string, args ...interface{}) []map[string]interface{} {
+	return DBGetAll(a.App.GetMysqlCon("default"), format, args...)
 }
