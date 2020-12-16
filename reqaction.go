@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // ActionHandle 路由要处理的防反
@@ -67,9 +66,9 @@ func (a *GReq) SetCookie(key, val string) {
 		Name:   key,
 		Value:  val,
 		Path:   "/",
-		MaxAge: 1800,
+		MaxAge: 86400 * 7,
 		//Domain: "localhost",
-		Expires: time.Now().AddDate(0, 1, 0),
+		//Expires: time.Now().AddDate(0, 1, 0),
 	}
 
 	http.SetCookie(a.W, c)
