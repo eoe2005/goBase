@@ -1,6 +1,7 @@
 package goBase
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -8,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // ActionHandle 路由要处理的防反
@@ -17,9 +19,10 @@ type ActionHandle interface {
 
 // GReq 接口处理
 type GReq struct {
-	W   http.ResponseWriter
-	R   *http.Request
-	App *APP
+	W       http.ResponseWriter
+	R       *http.Request
+	App     *APP
+	Context context.Context
 }
 
 // GetUID 获取用户的ID
@@ -230,4 +233,41 @@ func (a *GReq) DbFetchRow(format string, args ...interface{}) map[string]interfa
 // DbFetchAll 获取全部数据
 func (a *GReq) DbFetchAll(format string, args ...interface{}) []map[string]interface{} {
 	return DBGetAll(a.App.GetMysqlCon("default"), format, args...)
+}
+
+// DbUpdateData 更新数据
+func (a *GReq) DbUpdateData(format string, args ...interface{}) int64 {
+	return DBUpdate(a.App.GetMysqlCon("default"), format, args...)
+}
+
+// SetCacheNx 设置缓存
+func (a *GReq) SetCacheNx(k string, val interface{}, timeout int64) {
+	rdb := a.App.GetRedis("default")
+	defer rdb.Close()
+	rdb.SetNX(a.Context, k, val, time.Second*time.Duration(timeout))
+}
+
+// SetCache 没有超时时间
+func (a *GReq) SetCache(k string, val interface{}) {
+	rdb := a.App.GetRedis("default")
+	defer rdb.Close()
+	rdb.Set(a.Context, k, val, 0)
+}
+
+// CacheGet 获取Cache的配置
+func (a *GReq) CacheGet(k string) string {
+	rdb := a.App.GetRedis("default")
+	defer rdb.Close()
+	r, e := rdb.Get(a.Context, k).Result()
+	if e != nil {
+		return ""
+	}
+	return r
+}
+
+//CacheDel 删除Cache
+func (a *GReq) CacheDel(k ...string) {
+	rdb := a.App.GetRedis("default")
+	defer rdb.Close()
+	rdb.Del(a.Context, k...)
 }

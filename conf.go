@@ -18,19 +18,18 @@ type MysqlConfig struct {
 // RedisConfig Redis的配置信息
 type RedisConfig struct {
 	Host string
-	Port int
 	Auth string
 	DB   int
 }
 
 // Config 配置文件
 type AppConfig struct {
-	Port       int                    //端口
-	Routers map[string]interface{} // 一般接口
+	Port           int                    //端口
+	Routers        map[string]interface{} // 一般接口
 	RoutersLogined map[string]interface{} //必须登录的接口
-	MysqlConfs map[string]*MysqlConfig
-	RedisConfs map[string]*RedisConfig
-	KV         map[string]interface{}
+	MysqlConfs     map[string]*MysqlConfig
+	RedisConfs     map[string]*RedisConfig
+	KV             map[string]interface{}
 }
 
 // getDBCOnf 获取数据库默认配置
