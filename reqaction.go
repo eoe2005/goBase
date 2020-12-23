@@ -175,6 +175,15 @@ func (a *GReq) Post(key string) string {
 	return a.R.PostFormValue(key)
 }
 
+// PostInt 获取POSTInt 数据
+func (a *GReq) PostInt(key string) int64 {
+	r, e := strconv.ParseInt(a.R.PostFormValue(key), 10, 64)
+	if e != nil {
+		return 0
+	}
+	return r
+}
+
 func (a *GReq) checkParams(v, rules string) bool {
 	vals := strings.Split(rules, "|")
 	for i := range vals {
