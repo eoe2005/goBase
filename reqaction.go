@@ -46,8 +46,8 @@ func (a *GReq) GetUID() int64 {
 // SetUID 设置用户信息
 func (a *GReq) SetUID(uid int64) {
 	code := a.App.RandString(10)
-	a.SetAesCookie("guk", code)
-	a.SetAesCookie(code, uid)
+	a.SetAesCookie("guk", code, 0)
+	a.SetAesCookie(code, uid, 0)
 }
 
 // DeleteCookie 删除COOKIE
@@ -64,14 +64,15 @@ func (a *GReq) DeleteCookie(key ...string) {
 }
 
 // SetCookie 设置Cookie
-func (a *GReq) SetCookie(key, val string) {
+func (a *GReq) SetCookie(key, val string, MaxAge int) {
+	if MaxAge == 0 {
+		MaxAge = 86400 * 365
+	}
 	c := &http.Cookie{
 		Name:   key,
 		Value:  val,
 		Path:   "/",
-		MaxAge: 86400 * 7,
-		//Domain: "localhost",
-		//Expires: time.Now().AddDate(0, 1, 0),
+		MaxAge: MaxAge,
 	}
 
 	http.SetCookie(a.W, c)
@@ -79,13 +80,13 @@ func (a *GReq) SetCookie(key, val string) {
 }
 
 // SetAesCookie AES Cookie
-func (a *GReq) SetAesCookie(key string, val interface{}) {
+func (a *GReq) SetAesCookie(key string, val interface{}, maxAge int) {
 	data, e := a.App.Aes.Encode(fmt.Sprintf("%v", val))
 	if e != nil {
 		LogError("设置AESCookie 失败 : %v %v", key, e)
 		return
 	}
-	a.SetCookie(key, data)
+	a.SetCookie(key, data, maxAge)
 }
 
 // GetIP 获取客户端IP
