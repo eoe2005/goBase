@@ -190,12 +190,12 @@ func (t *DBTable) Find(id interface{}) map[string]interface{} {
 
 // FindByWhere 根据where条件查询一行
 func (t *DBTable) FindByWhere(format string, args ...interface{}) map[string]interface{} {
-	return DBGetRow(t.db, fmt.Sprintf("SELECT * FROM %v WHERE 1=1 AND %v", t.table, format), args...)
+	return DBGetRow(t.db, fmt.Sprintf("SELECT * FROM %v WHERE  %v", t.table, format), args...)
 }
 
 // FetchAll 根据where条件查询一行
 func (t *DBTable) FetchAll(format string, args ...interface{}) []map[string]interface{} {
-	return DBGetAll(t.db, fmt.Sprintf("SELECT * FROM %v WHERE 1=1 AND %v", t.table, format), args...)
+	return DBGetAll(t.db, fmt.Sprintf("SELECT * FROM %v WHERE  %v", t.table, format), args...)
 }
 
 // DeleteByID 删除一行数据
@@ -205,5 +205,5 @@ func (t *DBTable) DeleteByID(id int64) int64 {
 
 // DeleteByWhere 根据WHERE 删除数据
 func (t *DBTable) DeleteByWhere(format string, args ...interface{}) int64 {
-	return DBDelete(t.db, fmt.Sprintf("DELETE FROM %v WHERE 1=1 AND %v", t.table, format), args...)
+	return DBDelete(t.db, fmt.Sprintf("DELETE FROM %v WHERE %v", t.table, format), args...)
 }
