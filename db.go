@@ -2,6 +2,7 @@ package goBase
 
 import (
 	"database/sql"
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -9,8 +10,8 @@ import (
 
 // DBTable 表结构
 type DBTable struct {
-	table String
-	con   String
+	table string
+	con   string
 	db    *sql.DB
 }
 
@@ -146,34 +147,44 @@ func (t *DBTable) InsertData(data map[string]interface{}) int64 {
 	le := len(data)
 	keys := make([]string, 0, le)
 	v1 := make([]string, 0, le)
-	vals := make([]interface{}, 0, len)
+	vals := make([]interface{}, 0, le)
 	for k, v := range data {
 		keys = append(keys, k)
 		vals = append(vals, v)
-		v1 = append(v1,"?")
+		v1 = append(v1, "?")
 	}
-	return DBInsert(t.db, fmt.Sprintf("INSERT INTO %v(%v) VALUES(%v)", t.table,strings.Join(keys,","),strings.Join(v1,",")),...vals)
+	return DBInsert(t.db, fmt.Sprintf("INSERT INTO %v(%v) VALUES(%v)", t.table, strings.Join(keys, ","), strings.Join(v1, ",")), vals...)
 }
-// UpdateDataById 根据ID更新数据
-func (t *DBTable) UpdateDataById(id,int64,data map[string]interface{})int64{
+
+// UpdateDataByID 根据ID更新数据
+func (t *DBTable) UpdateDataByID(id, int64, data map[string]interface{}) int64 {
 	le := len(data)
 	sets := make([]string, 0, le)
 	vals := make([]interface{}, 0, len)
 	for k, v := range data {
-		sets = append(keys, fmt.Sprintf("%v=?",k))
+		sets = append(keys, fmt.Sprintf("%v=?", k))
 		vals = append(vals, v)
 	}
 
-	return DBUpdate(t.db,fmt.Sprintf("UPDATE %v SET %v WHERE id=?",t.table,strings.Join(sets,",")),id)
+	return DBUpdate(t.db, fmt.Sprintf("UPDATE %v SET %v WHERE id=?", t.table, strings.Join(sets, ",")), id)
 }
 
 // Find 根据ID查询一条记录
-func (t *DBTable) Find(id interface{}){
-	return DBGetRow(t.db,fmt.Sprintf("SELECT * FROM %v WHERE id=?",t.table),id)
+func (t *DBTable) Find(id interface{}) map[string]interface{} {
+	return DBGetRow(t.db, fmt.Sprintf("SELECT * FROM %v WHERE id=?", t.table), id)
 }
+
 // FindByWhere 根据where条件查询一行
-func func (t *DBTable) FindByWhere(format string,...args interface{}){}
+func (t *DBTable) FindByWhere(format string, args ...interface{}) map[string]interface{} {
+	return DBGetRow(t.db, fmt.Sprintf("SELECT * FROM %v WHERE %v", t.table, format), args...)
+}
+
+// FetchAll 根据where条件查询一行
+func (t *DBTable) FetchAll(format string, args ...interface{}) []map[string]interface{} {
+	return DBGetAll(t.db, fmt.Sprintf("SELECT * FROM %v WHERE %v", t.table, format), args...)
+}
+
 // DeleteByID 删除一行数据
-func func (t *DBTable) DeleteByID(id int64)int64{
-	return DBDelete(t.db,fmt.Sprintf("DELETE FROM %v WHERE id=?",t.table),id)
+func (t *DBTable) DeleteByID(id int64) int64 {
+	return DBDelete(t.db, fmt.Sprintf("DELETE FROM %v WHERE id=?", t.table), id)
 }

@@ -50,6 +50,16 @@ func (a *GReq) SetUID(uid int64) {
 	a.SetAesCookie(code, uid, 0)
 }
 
+// GetTableDefault 获取数据库表的配置
+func (a *GReq) GetTableDefault(tableName string) *DBTable {
+	return a.GetTable(tableName, "default")
+}
+
+// GetTable 获取数据库表的配置
+func (a *GReq) GetTable(tableName, conName string) *DBTable {
+	return InitDBTable(tableName, conName, a.App.GetMysqlCon(conName))
+}
+
 // DeleteCookie 删除COOKIE
 func (a *GReq) DeleteCookie(key ...string) {
 	for i := range key {
