@@ -36,6 +36,7 @@ func DBGetRow(db *sql.DB, format string, args ...interface{}) map[string]interfa
 // DBGetAll 获取全部的记录
 func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interface{} {
 	rows, e := r.Query(format, args...)
+	fmt.Sprintf("SQL: %v %v \n", format, args)
 	defer rows.Close()
 	ret := make([]map[string]interface{}, 0)
 	if e != nil {
