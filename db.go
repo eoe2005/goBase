@@ -160,13 +160,26 @@ func (t *DBTable) InsertData(data map[string]interface{}) int64 {
 func (t *DBTable) UpdateDataByID(id, int64, data map[string]interface{}) int64 {
 	le := len(data)
 	sets := make([]string, 0, le)
-	vals := make([]interface{}, 0, len)
+	vals := make([]interface{}, 0, le)
 	for k, v := range data {
-		sets = append(keys, fmt.Sprintf("%v=?", k))
+		sets = append(sets, fmt.Sprintf("%v=?", k))
 		vals = append(vals, v)
 	}
 
 	return DBUpdate(t.db, fmt.Sprintf("UPDATE %v SET %v WHERE id=?", t.table, strings.Join(sets, ",")), id)
+}
+
+// UpdateDataByWhere 根据WHERE更新数据
+func (t *DBTable) UpdateDataByWhere(data map[string]interface{}, format string, args ...interface{}) int64 {
+	le := len(data)
+	sets := make([]string, 0, le)
+	vals := make([]interface{}, 0, le)
+	for k, v := range data {
+		sets = append(sets, fmt.Sprintf("%v=?", k))
+		vals = append(vals, v)
+	}
+
+	return DBUpdate(t.db, fmt.Sprintf("UPDATE %v SET %v WHERE %v", t.table, strings.Join(sets, ","), format), args...)
 }
 
 // Find 根据ID查询一条记录
