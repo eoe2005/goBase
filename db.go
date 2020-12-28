@@ -157,7 +157,7 @@ func (t *DBTable) InsertData(data map[string]interface{}) int64 {
 }
 
 // UpdateDataByID 根据ID更新数据
-func (t *DBTable) UpdateDataByID(id, int64, data map[string]interface{}) int64 {
+func (t *DBTable) UpdateDataByID(id int64, data map[string]interface{}) int64 {
 	le := len(data)
 	sets := make([]string, 0, le)
 	vals := make([]interface{}, 0, le)
