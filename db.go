@@ -201,3 +201,8 @@ func (t *DBTable) FetchAll(format string, args ...interface{}) []map[string]inte
 func (t *DBTable) DeleteByID(id int64) int64 {
 	return DBDelete(t.db, fmt.Sprintf("DELETE FROM %v WHERE id=?", t.table), id)
 }
+
+// DeleteByWhere 根据WHERE 删除数据
+func (t *DBTable) DeleteByWhere(format string, args ...interface{}) int64 {
+	return DBDelete(t.db, fmt.Sprintf("DELETE FROM %v WHERE %v", t.table, format), args...)
+}
