@@ -264,7 +264,7 @@ func (a *GReq) DbUpdateData(format string, args ...interface{}) int64 {
 func (a *GReq) SetCacheNx(k string, val interface{}, timeout int64) {
 	rdb := a.App.GetRedis("default")
 	defer rdb.Close()
-	rdb.SetNX(a.Context, k, val, time.Second*time.Duration(timeout))
+	rdb.Set(a.Context, k, val, time.Second*time.Duration(timeout))
 }
 
 // SetCache 没有超时时间
@@ -278,11 +278,28 @@ func (a *GReq) SetCache(k string, val interface{}) {
 func (a *GReq) CacheGet(k string) string {
 	rdb := a.App.GetRedis("default")
 	defer rdb.Close()
-	r, e := rdb.Get(a.Context, k).Result()
-	if e != nil {
-		return ""
+	return rdb.Get(a.Context, k).String()
+}
+
+// CacheGetFunc 设置缓存
+func (a *GReq) CacheGetFunc(k string, callfunc func(args ...interface{}) interface{}, timeout int64, args ...interface{}) interface{} {
+	rdb := a.App.GetRedis("default")
+	defer rdb.Close()
+	r := rdb.Get(a.Context, k).String()
+	if r == "" {
+		r2 := callfunc(args...)
+		dd, e := json.Marshal(r2)
+		if e == nil {
+			r = string(dd)
+			rdb.Set(a.Context, k, r, time.Second*time.Duration(timeout))
+
+		}
 	}
-	return r
+	var ret interface{}
+	if nil != json.Unmarshal([]byte(r), &ret) {
+		return nil
+	}
+	return ret
 }
 
 //CacheDel 删除Cache
