@@ -120,7 +120,7 @@ func (r *Smtp) Send() {
 		con.Write([]byte(fmt.Sprintf("QUIT%v", STMP_LFRT)))
 		con.Write([]byte(fmt.Sprintf("%v", STMP_LFRT)))
 		con.Close()
-		fmt.Printf("接收到内容：发送完毕\n")
+		//fmt.Printf("接收到内容：发送完毕\n")
 		return
 	}
 }
