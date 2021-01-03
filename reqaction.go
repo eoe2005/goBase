@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 // ActionHandle 路由要处理的防反
@@ -260,33 +262,12 @@ func (a *GReq) DbUpdateData(format string, args ...interface{}) int64 {
 	return DBUpdate(a.App.GetMysqlCon("default"), format, args...)
 }
 
-// SetCacheNx 设置缓存
-func (a *GReq) SetCacheNx(k string, val interface{}, timeout int64) {
+// RedisDefaultGetFunc 设置缓存
+func (a *GReq) RedisDefaultGetFunc(k string, callfunc func(args ...interface{}) interface{}, timeout int64, args ...interface{}) interface{} {
 	rdb := a.App.GetRedis("default")
 	defer rdb.Close()
-	rdb.Set(a.Context, k, val, time.Second*time.Duration(timeout))
-}
-
-// SetCache 没有超时时间
-func (a *GReq) SetCache(k string, val interface{}) {
-	rdb := a.App.GetRedis("default")
-	defer rdb.Close()
-	rdb.Set(a.Context, k, val, 0)
-}
-
-// CacheGet 获取Cache的配置
-func (a *GReq) CacheGet(k string) string {
-	rdb := a.App.GetRedis("default")
-	defer rdb.Close()
-	return rdb.Get(a.Context, k).String()
-}
-
-// CacheGetFunc 设置缓存
-func (a *GReq) CacheGetFunc(k string, callfunc func(args ...interface{}) interface{}, timeout int64, args ...interface{}) interface{} {
-	rdb := a.App.GetRedis("default")
-	defer rdb.Close()
-	r := rdb.Get(a.Context, k).String()
-	if r == "" {
+	r, ger := rdb.Get(a.Context, k).Result()
+	if ger != nil || r == "" {
 		r2 := callfunc(args...)
 		dd, e := json.Marshal(r2)
 		if e == nil {
@@ -302,9 +283,16 @@ func (a *GReq) CacheGetFunc(k string, callfunc func(args ...interface{}) interfa
 	return ret
 }
 
-//CacheDel 删除Cache
-func (a *GReq) CacheDel(k ...string) {
+//RedisDefaultDel 删除Cache
+func (a *GReq) RedisDefaultDel(k ...string) {
 	rdb := a.App.GetRedis("default")
 	defer rdb.Close()
 	rdb.Del(a.Context, k...)
+}
+
+// RedisDefaultFunc redis 一般操作
+func (a *GReq) RedisDefaultFunc(funcCall func(r *redis.Client, args ...interface{}) interface{}, args ...interface{}) interface{} {
+	red := a.App.GetRedis("default")
+	defer red.Close()
+	return funcCall(red, args...)
 }

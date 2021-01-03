@@ -26,11 +26,12 @@ func (a *APP) GetRedis(name string) *redis.Client {
 	if err != nil {
 		panic(err)
 	}
-	return redis.NewClient(&redis.Options{
+	ret := redis.NewClient(&redis.Options{
 		Password: conf.Auth,
 		Addr:     conf.Host,
 		DB:       conf.DB,
 	})
+	return ret
 }
 
 // GetMysqlCon 获取数据库连接

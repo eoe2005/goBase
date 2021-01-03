@@ -20,6 +20,7 @@ type RedisConfig struct {
 	Host string
 	Auth string
 	DB   int
+	//PreKey string
 }
 
 // Config 配置文件
