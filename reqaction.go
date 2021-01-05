@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -60,6 +61,28 @@ func (a *GReq) GetTableDefault(tableName string) *DBTable {
 // GetTable 获取数据库表的配置
 func (a *GReq) GetTable(tableName, conName string) *DBTable {
 	return InitDBTable(tableName, conName, a.App.GetMysqlCon(conName))
+}
+
+// Display 直接渲染模板
+func (a *GReq) Display(templatName string, data interface{}) {
+	templateHtm := a.RedisDefaultGetFunc("tmp_name:"+templatName, func(args ...interface{}) interface{} {
+		a := args[0].(*GReq)
+
+		row := a.GetTableDefault("tb_template").FindByWhere("template_name=?", templatName)
+		contents, ok := row["content"]
+		if ok {
+			return contents
+		}
+		return ""
+	}, 600, a).(string)
+	t, e := template.ParseGlob(templateHtm)
+	if e != nil {
+		a.Fail(500, "解析数据失败")
+		return
+	}
+	t.Execute(a.W, data)
+
+	return
 }
 
 // DeleteCookie 删除COOKIE

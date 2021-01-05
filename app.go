@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -75,20 +76,37 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		Context: context.Background(),
 	}
 	path := r.URL.Path
-	isLogin := false
-	h, ok := a.AppConfig.Routers[path]
-	if !ok {
-		h, ok = a.AppConfig.RoutersLogined[path]
-		isLogin = true
-	}
-	if ok {
-		if isLogin {
+	var h interface{}
+	var ok = false
+	isWeb := false
+	if strings.HasPrefix(path, "/web/") {
+		path = strings.TrimPrefix(path, "/web")
+		h, ok = a.AppConfig.RoutersWeb[path]
+		if !ok {
+			req.Fail(404, "接口不存在")
+			return
+		}
+		isWeb = true
+	} else if strings.HasPrefix(path, "/admin/") {
+		path = strings.TrimPrefix(path, "/admin")
+		h, ok = a.AppConfig.RoutersAdmin[path]
+		if !ok {
+			req.Fail(404, "接口不存在")
+			return
+		}
+	} else {
+		h, ok = a.AppConfig.Routers[path]
+		if !ok {
+			h, ok = a.AppConfig.RoutersLogined[path]
 			uid := req.GetUID()
 			if uid < 1 {
 				req.Fail(301, "账号没有登录")
 				return
 			}
 		}
+	}
+
+	if ok {
 		t := reflect.TypeOf(h).Kind()
 		if t == reflect.Struct {
 			m := reflect.ValueOf(h).MethodByName("Handle")
@@ -101,13 +119,21 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 			handle(req)
 			return
 		} else {
-			req.Fail(404, "接口不存在")
+			if isWeb {
+
+			} else {
+				req.Fail(404, "接口不存在")
+			}
 			return
 		}
 		return
 	}
-	req.Fail(404, "接口不存在")
+	if isWeb {
 
+	} else {
+		req.Fail(404, "接口不存在")
+	}
+	return
 }
 
 // Run 程序运行

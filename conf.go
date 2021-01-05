@@ -28,6 +28,8 @@ type AppConfig struct {
 	Port           int                    //端口
 	Routers        map[string]interface{} // 一般接口
 	RoutersLogined map[string]interface{} //必须登录的接口
+	RoutersAdmin   map[string]interface{} //管理后台的接口
+	RoutersWeb     map[string]interface{} //页面显示
 	MysqlConfs     map[string]*MysqlConfig
 	RedisConfs     map[string]*RedisConfig
 	KV             map[string]interface{}
