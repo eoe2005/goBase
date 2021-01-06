@@ -239,6 +239,20 @@ func (a *GReq) Post(key string) string {
 	return a.R.PostFormValue(key)
 }
 
+// Get 获取Get参数
+func (a *GReq) Get(key string) string {
+	return a.R.URL.Query().Get(key)
+}
+
+// GetInt 获取GET参数
+func (a *GReq) GetInt(key string) int64 {
+	r, e := strconv.ParseInt(a.Get(key), 10, 64)
+	if e != nil {
+		return 0
+	}
+	return r
+}
+
 // PostInt 获取POSTInt 数据
 func (a *GReq) PostInt(key string) int64 {
 	r, e := strconv.ParseInt(a.R.PostFormValue(key), 10, 64)
