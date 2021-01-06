@@ -107,6 +107,7 @@ func (a *GReq) Display(templatName string, data interface{}) {
 		a.Fail(500, "解析数据失败")
 		return
 	}
+	a.W.Header().Add("Content-Type", "text/html; charset=utf-8")
 	t.Execute(a.W, data)
 
 	return
@@ -196,7 +197,7 @@ func (a *GReq) GetCookie(key string) string {
 
 // Fail 输出错误信息
 func (a *GReq) Fail(code int64, msg string) {
-	a.W.Header().Add("Content-Type", "application/json")
+	a.W.Header().Add("Content-Type", "application/json; charset=utf-8")
 	r := map[string]interface{}{"code": code, "msg": msg, "data": ""}
 	rd, _ := json.Marshal(r)
 	a.W.Write(rd)
@@ -204,7 +205,7 @@ func (a *GReq) Fail(code int64, msg string) {
 
 //Success 成功时候的输出
 func (a *GReq) Success(data interface{}) {
-	a.W.Header().Add("Content-Type", "application/json")
+	a.W.Header().Add("Content-Type", "application/json; charset=utf-8")
 	r := map[string]interface{}{"code": 0, "msg": "", "data": data}
 	rd, _ := json.Marshal(r)
 	a.W.Write(rd)
