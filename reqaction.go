@@ -28,6 +28,30 @@ type GReq struct {
 	Context context.Context
 }
 
+// GetAdminUID 获取登录的管理员的UID
+func (a *GReq) GetAdminUID() int64 {
+	data := a.GetAesCookie("aui")
+	if len(data) < 1 {
+		return 0
+	}
+	uid := a.GetAesCookie(data)
+	if len(uid) < 1 {
+		return 0
+	}
+	u, e := strconv.ParseInt(uid, 10, 64)
+	if e != nil {
+		return 0
+	}
+	return u
+}
+
+// SetAdminUID 设置管理员的UID
+func (a *GReq) SetAdminUID(adminUID int64) {
+	code := a.App.RandString(10)
+	a.SetAesCookie("aui", code, 0)
+	a.SetAesCookie(code, adminUID, 0)
+}
+
 // GetUID 获取用户的ID
 func (a *GReq) GetUID() int64 {
 	data := a.GetAesCookie("guk")
@@ -69,13 +93,16 @@ func (a *GReq) Display(templatName string, data interface{}) {
 		a := args[0].(*GReq)
 
 		row := a.GetTableDefault("tb_template").FindByWhere("template_name=?", templatName)
+		if row != nil {
+			return ""
+		}
 		contents, ok := row["content"]
 		if ok {
 			return contents
 		}
 		return ""
 	}, 600, a).(string)
-	t, e := template.ParseGlob(templateHtm)
+	t, e := template.New(templatName).Parse(templateHtm)
 	if e != nil {
 		a.Fail(500, "解析数据失败")
 		return
