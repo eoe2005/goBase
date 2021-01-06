@@ -194,9 +194,19 @@ func (t *DBTable) FindByWhere(format string, args ...interface{}) map[string]int
 	return DBGetRow(t.db, fmt.Sprintf("SELECT * FROM %v WHERE  %v", t.table, format), args...)
 }
 
+// GetRow 获取一行
+func (t *DBTable) GetRow(fields, format string, args ...interface{}) map[string]interface{} {
+	return DBGetRow(t.db, fmt.Sprintf("SELECT %v FROM %v WHERE  %v", fields, t.table, format), args...)
+}
+
 // FetchAll 根据where条件查询一行
 func (t *DBTable) FetchAll(format string, args ...interface{}) []map[string]interface{} {
 	return DBGetAll(t.db, fmt.Sprintf("SELECT * FROM %v WHERE  %v", t.table, format), args...)
+}
+
+// GetAll 全部的行
+func (t *DBTable) GetAll(fields, format string, args ...interface{}) []map[string]interface{} {
+	return DBGetAll(t.db, fmt.Sprintf("SELECT %v FROM %v WHERE  %v", fields, t.table, format), args...)
 }
 
 // DeleteByID 删除一行数据
