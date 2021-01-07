@@ -180,8 +180,9 @@ func (t *DBTable) UpdateDataByWhere(data map[string]interface{}, format string, 
 		sets = append(sets, fmt.Sprintf("%v=?", k))
 		vals = append(vals, v)
 	}
+	vals = append(vals, args...)
 
-	return DBUpdate(t.db, fmt.Sprintf("UPDATE %v SET %v WHERE %v", t.table, strings.Join(sets, ","), format), args...)
+	return DBUpdate(t.db, fmt.Sprintf("UPDATE %v SET %v WHERE %v", t.table, strings.Join(sets, ","), format), vals...)
 }
 
 // Find 根据ID查询一条记录
