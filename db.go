@@ -155,7 +155,7 @@ func (t *DBTable) InsertData(data map[string]interface{}) int64 {
 		vals = append(vals, v)
 		v1 = append(v1, "?")
 	}
-	return DBInsert(t.db, fmt.Sprintf("INSERT INTO %v(%v) VALUES(`%v`)", t.table, strings.Join(keys, "`,`"), strings.Join(v1, ",")), vals...)
+	return DBInsert(t.db, fmt.Sprintf("INSERT INTO %v(`%v`) VALUES(%v)", t.table, strings.Join(keys, "`,`"), strings.Join(v1, ",")), vals...)
 }
 
 // UpdateDataByID 根据ID更新数据
