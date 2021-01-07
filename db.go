@@ -103,12 +103,12 @@ func DBGetAll(r *sql.DB, format string, args ...interface{}) []map[string]interf
 func DBUpdate(db *sql.DB, format string, args ...interface{}) int64 {
 	r, e := db.Exec(format, args...)
 	if e != nil {
-		LogError("SQL 错误 %v", e)
+		LogError("SQL 错误 %v -> %v", format, e)
 		return 0
 	}
 	ret, e2 := r.RowsAffected()
 	if e2 != nil {
-		LogError("SQL 错误 %v", e2)
+		LogError("SQL 错误 %v ->  %v", format, e2)
 		return 0
 	}
 	return ret
@@ -118,12 +118,12 @@ func DBUpdate(db *sql.DB, format string, args ...interface{}) int64 {
 func DBInsert(db *sql.DB, format string, args ...interface{}) int64 {
 	r, e := db.Exec(format, args...)
 	if e != nil {
-		LogError("SQL 错误 %v", e)
+		LogError("SQL 错误 %v -> %v", format, e)
 		return 0
 	}
 	ret, e2 := r.LastInsertId()
 	if e2 != nil {
-		LogError("SQL 错误 %v", e2)
+		LogError("SQL 错误 %v -> %v", format, e2)
 		return 0
 	}
 	return ret
@@ -133,12 +133,12 @@ func DBInsert(db *sql.DB, format string, args ...interface{}) int64 {
 func DBDelete(db *sql.DB, format string, args ...interface{}) int64 {
 	r, e := db.Exec(format, args...)
 	if e != nil {
-		LogError("SQL 错误 %v", e)
+		LogError("SQL 错误 %v -> %v", format, e)
 		return 0
 	}
 	ret, e2 := r.RowsAffected()
 	if e2 != nil {
-		LogError("SQL 错误 %v", e2)
+		LogError("SQL 错误 %v -> %v", format, e2)
 		return 0
 	}
 	return ret
