@@ -167,8 +167,8 @@ func (t *DBTable) UpdateDataByID(id int64, data map[string]interface{}) int64 {
 		sets = append(sets, fmt.Sprintf("%v=?", k))
 		vals = append(vals, v)
 	}
-
-	return DBUpdate(t.db, fmt.Sprintf("UPDATE %v SET %v WHERE id=?", t.table, strings.Join(sets, ",")), id)
+	vals = append(vals, id)
+	return DBUpdate(t.db, fmt.Sprintf("UPDATE %v SET %v WHERE id=?", t.table, strings.Join(sets, ",")), vals...)
 }
 
 // UpdateDataByWhere 根据WHERE更新数据
