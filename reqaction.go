@@ -93,7 +93,7 @@ func (a *GReq) Display(templatName string, data interface{}) {
 		a := args[0].(*GReq)
 
 		row := a.GetTableDefault("tb_template").FindByWhere("template_name=?", templatName)
-		if row != nil {
+		if row == nil {
 			return ""
 		}
 		contents, ok := row["content"]
