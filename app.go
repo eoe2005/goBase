@@ -80,7 +80,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 	var ok = false
 	isWeb := false
 	if strings.HasPrefix(path, "/web/") {
-		path = strings.TrimPrefix(path, "/web/")
+		path = strings.TrimPrefix(path, "/web")
 		h, ok = a.AppConfig.RoutersWeb[path]
 		if !ok {
 			req.Fail(404, "接口不存在")
