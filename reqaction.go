@@ -101,7 +101,7 @@ func (a *GReq) Display(templatName string, data interface{}) {
 			return contents
 		}
 		return ""
-	}, 5, a).(string)
+	}, 10, a).(string)
 	t, e := template.New(templatName).Parse(templateHtm)
 	if e != nil {
 		a.Fail(500, "解析数据失败")
