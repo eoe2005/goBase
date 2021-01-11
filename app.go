@@ -83,7 +83,8 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		path = strings.TrimPrefix(path, "/web")
 		h, ok = a.AppConfig.RoutersWeb[path]
 		if !ok {
-			req.Fail(404, "接口不存在")
+			req.Display("h5-404", nil)
+
 			return
 		}
 		isWeb = true
