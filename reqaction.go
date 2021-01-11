@@ -107,6 +107,7 @@ func (a *GReq) Display(templatName string, data interface{}) {
 		a.Fail(500, "解析数据失败")
 		return
 	}
+	fmt.Println(templatName, templateHtm)
 	a.W.Header().Add("Content-Type", "text/html; charset=utf-8")
 	t.Execute(a.W, data)
 
