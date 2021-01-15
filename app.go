@@ -75,6 +75,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		R:       r,
 		Context: context.Background(),
 	}
+	req.startSession()
 	path := r.URL.Path
 	var h interface{}
 	var ok = false
@@ -84,7 +85,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		h, ok = a.AppConfig.RoutersWeb[path]
 		if !ok {
 			req.Display("h5-404", nil)
-
+			req.saveSession()
 			return
 		}
 		isWeb = true
@@ -93,6 +94,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 		h, ok = a.AppConfig.RoutersAdmin[path]
 		if !ok {
 			req.Fail(404, "接口不存在")
+			req.saveSession()
 			return
 		}
 	} else {
@@ -102,6 +104,7 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 			uid := req.GetUID()
 			if uid < 1 {
 				req.Fail(301, "账号没有登录")
+				req.saveSession()
 				return
 			}
 		}
@@ -113,11 +116,13 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 			m := reflect.ValueOf(h).MethodByName("Handle")
 			args := []reflect.Value{reflect.ValueOf(req)}
 			m.Call(args)
+			req.saveSession()
 			return
 		}
 		if t == reflect.Func {
 			handle, _ := h.(func(*GReq))
 			handle(req)
+			req.saveSession()
 			return
 		} else {
 			if isWeb {
@@ -125,15 +130,17 @@ func (a *APP) ServerDefaultHandle(w http.ResponseWriter, r *http.Request) {
 			} else {
 				req.Fail(404, "接口不存在")
 			}
+			req.saveSession()
 			return
 		}
-		return
 	}
 	if isWeb {
 
 	} else {
 		req.Fail(404, "接口不存在")
+
 	}
+	req.saveSession()
 	return
 }
 

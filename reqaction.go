@@ -26,6 +26,8 @@ type GReq struct {
 	R       *http.Request
 	App     *APP
 	Context context.Context
+	sid     string
+	sess    map[string]string
 }
 
 // GetAdminUID 获取登录的管理员的UID
@@ -361,4 +363,36 @@ func (a *GReq) RedisDefaultFunc(funcCall func(r *redis.Client, args ...interface
 	red := a.App.GetRedis("default")
 	defer red.Close()
 	return funcCall(red, args...)
+}
+
+func (a *GReq) startSession() {
+	sid := a.GetCookie("sid")
+	a.sid = sid
+	if sid == "" {
+		sid = a.App.Aes.MD5(fmt.Sprintf("%d %v", time.Now().UnixNano(), a.GetIP()))
+		a.sid = sid
+	}
+	sess, e := a.App.GetRedis("session").HGetAll(a.Context, a.sid).Result()
+	if e != nil {
+		a.sess = map[string]string{}
+	} else {
+		a.sess = sess
+	}
+}
+func (a *GReq) saveSession() {
+	a.App.GetRedis("session").HSet(a.Context, a.sid, a.sess)
+	a.SetCookie("sid", a.sid, 86400*360)
+}
+
+// GetSession 获取Session的内容
+func (a *GReq) GetSession(key string) string {
+	if r, o := a.sess[key]; o {
+		return r
+	}
+	return ""
+}
+
+// SetSession 设置Session
+func (a *GReq) SetSession(key string, val interface{}) {
+	a.sess[key] = fmt.Sprintf("%v", val)
 }
